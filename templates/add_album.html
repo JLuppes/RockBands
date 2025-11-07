@@ -5,12 +5,12 @@
     <label>Album Title:</label><input type="text" name="albumtitle"><br>
     <label>Release Year:</label><input type="number" name="releaseyear"><br>
 
-    <label>Band:</label>
-    <select name="bandid">
-        {% for band in bands %}
-        <option value="{{ band.BandID }}">{{ band.BandName }}</option>
-        {% endfor %}
-    </select><br>
+    <label>Bands (select multiple):</label><br>
+    {% for band in bands %}
+        <input type="checkbox" name="bandids" value="{{ band.BandID }}" id="band_{{ band.BandID }}">
+        <label for="band_{{ band.BandID }}">{{ band.BandName }}</label><br>
+    {% endfor %}
+    <br>
 
     <button type="submit">Save</button>
 </form>

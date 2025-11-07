@@ -1,12 +1,15 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <h2>Bands</h2>
 
 {% for band in bands %}
 <section>
   <h3>
-    {{ band.BandName }} ({{ band.FormedYear }}) {#
+    {{ band.BandName }} ({{ band.FormedYear }})
+    {# Optional: Edit/Delete links
     <a href="{{url_for('edit_band', id=band.BandID)}}">Edit</a>
-    <a href="{{url_for('delete_band', id=band.BandID)}}">Delete</a> #}
+    <a href="{{url_for('delete_band', id=band.BandID)}}">Delete</a>
+    #}
   </h3>
   <p><strong>Home:</strong> {{ band.HomeLocation }}</p>
 
@@ -14,9 +17,11 @@
   <ul>
     {% for m in band.memberships %}
     <li>
-      {{ m.member.MemberName }} – {{ m.Role or m.member.MainPosition }} {% if
-      m.StartYear %} ({{ m.StartYear }}{% if m.EndYear %} – {{ m.EndYear }}{%
-      else %} – present{% endif %}){% endif %} &nbsp;
+      {{ m.member.MemberName }} – {{ m.Role or m.member.MainPosition }}
+      {% if m.StartYear %}
+        ({{ m.StartYear }}{% if m.EndYear %} – {{ m.EndYear }}{% else %} – present{% endif %})
+      {% endif %}
+      &nbsp;
       <a href="{{ url_for('edit_membership', id=m.MembershipID) }}">Edit</a> |
       <a href="{{ url_for('delete_membership', id=m.MembershipID) }}">Delete</a>
     </li>
@@ -28,9 +33,26 @@
   <h4>Albums</h4>
   <ul>
     {% for album in band.albums %}
-    <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }})</li>
+      <li>
+        <strong>{{ album.AlbumTitle }}</strong> ({{ album.ReleaseYear }})
+        {% set collaborators = album.bands | rejectattr("BandID", "equalto", band.BandID) | list %}
+        {% if collaborators %}
+          <br>
+          <em>Collaborating with:</em>
+          <ul>
+            {% for collaborator in collaborators %}
+              <li>{{ collaborator.BandName }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <br><em>No other bands on this album</em>
+        {% endif %}
+      </li>
+    {% else %}
+      <li><em>No albums assigned yet</em></li>
     {% endfor %}
   </ul>
 </section>
 <hr />
-{% endfor %} {% endblock %}
+{% endfor %}
+{% endblock %}

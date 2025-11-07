@@ -3,12 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Reads from .env file
+load_dotenv()
 
 app = Flask(__name__)
-
-# Using SQLite for student simplicity
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands-mm.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands-v2.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SECRET'
 
@@ -18,21 +16,18 @@ db = SQLAlchemy(app)
 # DATABASE MODELS
 # ==========================
 
-
 class Bands(db.Model):
     BandID = db.Column(db.Integer, primary_key=True)
     BandName = db.Column(db.String(80), nullable=False)
     FormedYear = db.Column(db.Integer)
     HomeLocation = db.Column(db.String(80))
-    # Relationship: One band has many members + albums
-    # members = db.relationship('Members', backref='band', lazy=True)
     memberships = db.relationship('Memberships', backref='band', lazy=True)
-    albums = db.relationship('Albums', backref='band', lazy=True)
+    # Many-to-many with Albums through BandAlbums junction table
+    albums = db.relationship('Albums', secondary='band_albums', back_populates='bands')
 
 
 class Members(db.Model):
     MemberID = db.Column(db.Integer, primary_key=True)
-    # BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
     MemberName = db.Column(db.String(80), nullable=False)
     MainPosition = db.Column(db.String(80))
     memberships = db.relationship('Memberships', backref='member', lazy=True)
@@ -40,26 +35,31 @@ class Members(db.Model):
 
 class Memberships(db.Model):
     MembershipID = db.Column(db.Integer, primary_key=True)
-    BandID = db.Column(db.Integer, db.ForeignKey(
-        'bands.BandID'), nullable=False)
-    MemberID = db.Column(db.Integer, db.ForeignKey(
-        'members.MemberID'), nullable=False)
+    BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
+    MemberID = db.Column(db.Integer, db.ForeignKey('members.MemberID'), nullable=False)
     StartYear = db.Column(db.Integer)
-    EndYear = db.Column(db.Integer)  # NULL if still active
+    EndYear = db.Column(db.Integer)
     Role = db.Column(db.Text)
+
+
+# Junction table for many-to-many relationship
+class BandAlbums(db.Model):
+    __tablename__ = 'band_albums'
+    BandAlbumID = db.Column(db.Integer, primary_key=True)
+    BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
+    AlbumID = db.Column(db.Integer, db.ForeignKey('albums.AlbumID'), nullable=False)
 
 
 class Albums(db.Model):
     AlbumID = db.Column(db.Integer, primary_key=True)
-    BandID = db.Column(db.Integer, db.ForeignKey(
-        'bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+    # Many-to-many with Bands through BandAlbums junction table
+    bands = db.relationship('Bands', secondary='band_albums', back_populates='albums')
 
 # ==========================
 # ROUTES
 # ==========================
-
 
 @app.route('/')
 def index():
@@ -82,12 +82,11 @@ def add_band():
 
 @app.route('/members/add', methods=['GET', 'POST'])
 def add_member():
-    bands = Bands.query.all()  # Students see querying with relationships
+    bands = Bands.query.all()
     if request.method == 'POST':
         new_member = Members(
             MemberName=request.form['membername'],
             MainPosition=request.form['mainposition']
-            # BandID=request.form['bandid']
         )
         db.session.add(new_member)
         db.session.commit()
@@ -101,9 +100,15 @@ def add_album():
     if request.method == 'POST':
         new_album = Albums(
             AlbumTitle=request.form['albumtitle'],
-            ReleaseYear=request.form['releaseyear'],
-            BandID=request.form['bandid']
+            ReleaseYear=request.form['releaseyear']
         )
+        # Add selected bands to the album
+        band_ids = request.form.getlist('bandids')
+        for band_id in band_ids:
+            band = Bands.query.get(band_id)
+            if band:
+                new_album.bands.append(band)
+        
         db.session.add(new_album)
         db.session.commit()
         return redirect(url_for('index'))
@@ -118,7 +123,6 @@ def view_by_band():
 
 @app.route('/bands/view/<int:id>')
 def view_band(id):
-    # Shows real database relationship querying
     band = Bands.query.get_or_404(id)
     return render_template('display_by_band.html', bands=[band])
 
@@ -142,7 +146,6 @@ def add_membership():
     return render_template('add_membership.html', bands=bands, members=members)
 
 
-
 @app.route('/memberships/edit/<int:id>', methods=['GET', 'POST'])
 def edit_membership(id):
     membership = Memberships.query.get_or_404(id)
@@ -155,10 +158,9 @@ def edit_membership(id):
         membership.StartYear = request.form.get('startyear') or None
         membership.EndYear = request.form.get('endyear') or None
         db.session.commit()
-        flash('Membership updates', 'success')
+        flash('Membership updated', 'success')
         return redirect(url_for('view_by_band'))
-
-    return render_template('edit_membership.html', membership=membership, bands=bands, members=members)
+    return render_template('add_membership.html', membership=membership, bands=bands, members=members)
 
 
 @app.route('/memberships/delete/<int:id>')
@@ -170,7 +172,6 @@ def delete_membership(id):
     return redirect(url_for('view_by_band'))
 
 
-# Create DB if not exists
 with app.app_context():
     db.create_all()
 
