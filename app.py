@@ -8,7 +8,7 @@ load_dotenv()  # Reads from .env file
 app = Flask(__name__)
 
 # Using SQLite for student simplicity
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands-mm.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands-mm-feature.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SECRET'
 
