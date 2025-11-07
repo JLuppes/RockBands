@@ -31,14 +31,16 @@
     <li>
       <strong>{{ album.AlbumTitle }}</strong> ({{ album.ReleaseYear }})
       
-      <ul>  
       {%if band.collabs%} 
 
+      <ul>
         {% for collab in album.collabs %}
-        
+
         <li>
           {{ collab.band.BandName }}
+           <a href="{{ url_for('albums_collabs_delete', id=collab.CollabID) }}">Delete</a>
         </li>
+
         {% endfor %}
       </ul>
 

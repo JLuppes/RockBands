@@ -192,6 +192,14 @@ def delete_membership(id):
     flash('Membership removed', 'success')
     return redirect(url_for('view_by_band'))
 
+@app.route('/albums/collabs/delete/<int:id>')
+def albums_collabs_delete(id):
+    collab = Collabs.query.get_or_404(id)
+    db.session.delete(collab)
+    db.session.commit()
+    flash('Band removed', 'success')
+    return redirect(url_for('view_by_band'))
+
 
 # Create DB if not exists
 with app.app_context():
