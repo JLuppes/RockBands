@@ -28,7 +28,23 @@
   <h4>Albums</h4>
   <ul>
     {% for album in band.albums %}
-    <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }})</li>
+    <li>
+      <strong>{{ album.AlbumTitle }}</strong> ({{ album.ReleaseYear }})
+      
+      <ul>  
+      {%if band.collabs%} 
+
+        {% for collab in album.collabs %}
+        
+        <li>
+          {{ collab.band.BandName }}
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% endif %}
+
+    </li>
     {% endfor %}
   </ul>
 </section>

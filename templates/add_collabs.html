@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Add Album Collabs</h2>
+<form method = "post">
+    <!-- <label>Album Title:</label>
+        <input type = "text" name = "albumtitle"> <br> -->
+    <!-- <label>Release Year:</label> 
+        <input type = "number" name = "releaseyear"> <br> -->
+    <label>Collab Album:</label>
+        <select name = "albumid">
+            
+            <option value="">-- select album --</option>
+
+            {% for album in albums %}
+            <option value = "{{ album.AlbumID }}">{{ album.AlbumTitle }}</option>
+            {% endfor %}
+        </select> <br>
+
+    <label>Band in collab:</label>
+        <select name = "bandid">
+
+            <option value="">-- select band --</option>
+
+            {% for band in bands %}
+            <option value = "{{ band.BandID }}">{{ band.BandName }}</option>
+            {% endfor %}
+        </select> <br>
+
+
+    <button type="submit">Save</button>
+</form>
+
+
+{% endblock %}

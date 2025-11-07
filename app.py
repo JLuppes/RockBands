@@ -28,6 +28,7 @@ class Bands(db.Model):
     # members = db.relationship('Members', backref='band', lazy=True)
     memberships = db.relationship('Memberships', backref='band', lazy=True)
     albums = db.relationship('Albums', backref='band', lazy=True)
+    collabs = db.relationship('Collabs', backref='band', lazy=True) #new relationship
 
 
 class Members(db.Model):
@@ -55,6 +56,13 @@ class Albums(db.Model):
         'bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+    collabs = db.relationship('Collabs', backref='album', lazy=True) #new relationship
+
+#New model for collabs. M2M relationship between Bands and Albums!
+class Collabs(db.Model):
+    CollabID = db.Column(db.Integer, primary_key = True)
+    AlbumID = db.Column(db.Integer, db.ForeignKey('albums.AlbumID'), nullable = False) #referes to album 
+    BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable = False) #refers to band
 
 # ==========================
 # ROUTES
@@ -108,6 +116,21 @@ def add_album():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add_album.html', bands=bands)
+
+@app.route('/albums/collabs', methods=['GET', 'POST'])
+def add_collabs():
+    bands = Bands.query.all()
+    albums = Albums.query.all()
+    if request.method == "POST":
+        collabs = Collabs(
+        AlbumID = request.form.get('albumid'),
+        BandID = request.form.get('bandid')
+        )
+        db.session.add(collabs)
+        db.session.commit()
+        flash('Collab established', 'success')
+        return redirect(url_for('view_by_band'))
+    return render_template('add_collabs.html', bands = bands, albums = albums)
 
 
 @app.route('/bands/view')
