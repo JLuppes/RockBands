@@ -2,22 +2,41 @@
 {% block content %}
 <h2>Bands</h2>
 
+<form method="get" action="{{ url_for('search_bands') }}">
+    <label>Search Bands:</label>
+    <input type="text" name="q" value="{{ search_query or '' }}" placeholder="Enter band name...">
+    <button type="submit">Search</button>
+    <a href="{{ url_for('view_by_band') }}">Clear</a>
+</form>
+<br>
+
 {% for band in bands %}
 <section>
-    <h3>{{ band.BandName }} ({{ band.FormedYear }})</h3>
+    <h3><a href="{{ url_for('view_band', id=band.BandID) }}">{{ band.BandName }}</a> ({{ band.FormedYear }})</h3>
     <p><strong>Home:</strong> {{ band.HomeLocation }}</p>
 
     <h4>Members</h4>
     <ul>
         {% for member in band.members %}
-        <li>{{ member.MemberName }} – {{ member.MainPosition }}</li>
+        <li><a href="{{ url_for('view_member', id=member.MemberID) }}">{{ member.MemberName }}</a> – {{ member.MainPosition }}</li>
         {% endfor %}
     </ul>
 
     <h4>Albums</h4>
     <ul>
         {% for album in band.albums %}
-        <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }})</li>
+        <li>
+            <a href="{{ url_for('view_album', id=album.AlbumID) }}">{{ album.AlbumTitle }}</a> ({{ album.ReleaseYear }})
+            {% if album.bands|length > 1 %}
+            <br><em>Collaboration with: 
+            {% for collab_band in album.bands %}
+                {% if collab_band.BandID != band.BandID %}
+                    <a href="{{ url_for('view_band', id=collab_band.BandID) }}">{{ collab_band.BandName }}</a>{% if not loop.last %}, {% endif %}
+                {% endif %}
+            {% endfor %}
+            </em>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
 </section>
