@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Member: {{ member.MemberName }}</h2>
+<p><strong>Main Position:</strong> {{ member.MainPosition }}</p>
+
+<hr>
+<h3>Albums this Member Appears On:</h3>
+<ul>
+    {% for album in albums %}
+    <li>
+        <a href="{{ url_for('view_album', id=album.AlbumID) }}">{{ album.AlbumTitle }}</a>
+        ({{ album.band.BandName }}, {{ album.ReleaseYear }})
+    </li>
+    {% endfor %}
+</ul>
+
+<hr>
+<h3></h3>Songs this Member Performed On:</h3>
+<ul>
+    {% for song in songs %}
+    <li>
+        "{{ song.Song_title }}" -from
+        <a href="{{ url_for('view_album', id=song.AlbumID) }}">{{ song.album.AlbumTitle }}</a>
+        ({{ song.band.BandName }})
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('index') }}">Back to Home</a>
+{% endblock %}

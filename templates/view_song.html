@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>View Song:</h2>
+
+<form id="songSelectorForm">
+    <label for="songSelector"><strong>Select a Song:</strong></label>
+    <select id="songSelector" name="songSelector" >
+        <option value="">-- Select a Song --</option>
+        {% for s in all_songs %}
+            <option value="{{ url_for('view_song', id=s.SongID) }}" 
+                {% if s.SongID == song.SongID %}selected{% endif %}>
+            {{ s.Song_title }}
+        </option>
+    {% endfor %}
+</select>
+</form>
+
+<hr>
+
+<section>
+<h3>Song Details:</h3>
+<p><strong>Band:</strong> {{ song.band.BandName }}</p>
+<p><strong>Title:</strong> {{ song.Song_title }}</p>
+<p><strong>Album:</strong> {{ song.AlbumTitle }}</p>
+<p><strong>Release Type:</strong> {{ song.ReleaseType }}</p>
+<p><strong>Media Format:</strong> {{ song.MediaFormat }}</p>
+<p><strong>Release Year:</strong> {{ song.SongReleaseYear }}</p>
+</section>
+
+<hr>
+
+<section>
+    <h4>Members who performed in this song:</h4>
+    {% if members %}
+    <ul>
+    {% for member in members %}
+        <li>
+            {{ member.MemberName }} - {{ member.MainPosition }}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p><em>No members found for this song.</em></p>
+  {% endif %}
+</section>
+
+
+<hr>
+
+<a href="{{ url_for('add_songmember') }}">+ Add Member to Song</a>
+
+<script>
+    document.getElementById('songSelector').addEventListener('change', function() {
+        var selectedUrl = this.value;
+        if (selectedUrl) {
+            window.location.href = selectedUrl;
+        }
+    }); 
+</script>
+{% endblock %}

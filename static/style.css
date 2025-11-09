@@ -1,4 +1,8 @@
-body { font-family: Arial, sans-serif; margin: 20px; }
+body { 
+    color:white ;
+    font-family: Arial, sans-serif; 
+    margin: 20px;
+    background-color: darkolivegreen; }
 header { margin-bottom: 20px; }
 label { width: 120px; display: inline-block; }
 button { margin-top: 10px; }

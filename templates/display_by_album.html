@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<h2>View Album</h2>
+
+<form id="albumSelectorForm">
+    <label for="albumSelector"><strong>Select an Album:</strong></label>
+    <select id="albumSelector" name="albumSelector" >
+        <option value="">-- Select an Album --</option>
+        {% for a in all_albums %}
+            <option value="{{ url_for('view_album', id=a.AlbumID) }}" 
+                {% if a.AlbumID == album.AlbumID %}selected{% endif %}>
+            {{ a.AlbumTitle }} ({{ a.band.BandName }})
+        </option>
+    {% endfor %}
+</select>
+</form>
+
+<hr>
+
+<section>
+    <h3>{{ album.AlbumTitle }}</h3>
+    <p><strong>Band:</strong> {{ album.band.BandName }}</p>
+    <p><strong>Release Year:</strong> {{ album.ReleaseYear }}</p>
+</section>
+
+<hr>
+
+<section>
+    <h4>Songs on this Album</h4>
+    {% if songs %}
+        <ul>
+            {% for song in songs %}
+                <li><a href="{{ url_for('view_song', id=song.SongID) }}">{{ song.Song_title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No songs added yet.</p>
+    {% endif %}
+</section>
+
+
+<hr>
+
+<h4>Members Featured on this Album</h4>
+{% if members %}
+    <ul>
+        {% for member in members %}
+            <li>{{ member.MemberName }} - {{ member.MainPosition }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p><em>No members linked to songs yet.</em></p>
+{% endif %}
+</section>
+
+
+<script>
+    document.getElementById('albumSelector').addEventListener('change', function() {
+        if (this.value) {window.location.href = this.value;
+    });
+
+</script>
+{% endblock %}

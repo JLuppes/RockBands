@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Song</h2>
+
+<form method="post" id="songForm">
+
+    <label>Song Title:</label>
+        <input type="text" name="songtitle"><br>
+
+    <label>Band:</label>
+        <select name="bandid" id="bandSelect">
+            <option value="">-- select band --</option>
+            {% for band in bands %}
+            <option value="{{ band.BandID }}">{{ band.BandName }}</option>
+            {% endfor %}
+        </select><br />
+
+    <label>Album:</label>
+        <select name="albumid" id="albumSelect">
+            <option value="">-- select album --</option>
+        </select><br />
+
+    <label>Song Release Year:</label>
+        <input type="number" name="songreleaseyear"><br>
+
+    <label>Release Type:</label><br>
+        <input type="radio" name="releasetype" value="Single">Single<br>
+        <input type="radio" name="releasetype" value="EP">EP<br>
+        <input type="radio" name="releasetype" value="Album">Album<br>  
+
+    <label>Media Format:</label><br>
+        <input type="radio" name="mediarelease" value="CD">CD<br>
+        <input type="radio" name="mediarelease" value="Vinyl">Vinyl<br>
+        <input type="radio" name="mediarelease" value="Digital">Digital<br>
+        <input type="radio" name="mediarelease" value="Cassette">Cassette<br>
+    
+
+    <button type="submit">Save</button>
+
+
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bandSelect = document.getElementById('bandSelect');
+        const albumSelect = document.getElementById('albumSelect');
+
+        bandSelect.addEventListener('change', function() {
+            const bandId = this.value;
+            albumSelect.innerHTML = '<option value="">-- select album --</option>'; // Clear previous options
+
+            if (!bandId) return;
+
+                fetch(`/get_albums/${bandId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.albums.length === 0) {
+                            const option = document.createElement('option');
+                            option.value = "";
+                            option.textContent = "No albums available";
+                            albumSelect.appendChild(option);
+                        } else {
+                            data.albums.forEach(album => {
+                                const option = document.createElement('option');
+                                option.value = album.id;
+                                option.textContent = album.title;
+                                albumSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error fetching albums:', error));
+            });
+        });
+</script>
+{% endblock %}

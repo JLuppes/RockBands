@@ -17,14 +17,28 @@
         <a href="{{ url_for('add_member') }}">Add Member</a> |
         <a href="{{ url_for('add_album') }}">Add Album</a> |
         <a href="{{ url_for('add_membership') }}">Add Membership</a> |
-        <a href="{{ url_for('view_by_band') }}">View Band Info</a>
+        <a href="{{ url_for('add_song') }}">Add Song</a> |
+        
+        
+        <a href="{{ url_for('view_by_band') }}">View Bands</a> |
+        <a href="{{ url_for('view_member', id=1) }}">View Member</a> |
+        <a href="{{ url_for('view_song', id=1) }}">View Song</a> |
+        <a href="{{ url_for('view_album', id=1) }}">View Album</a> |
+        
+
+
       </nav>
     </header>
     <main>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, msg in messages %}
-      <p class="{{ category }}">{{ msg }}</p>
-      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+      {% with messages = get_flashed_messages(with_categories=true) %}  
+        {% if messages %} 
+          {% for category, msg in messages %}
+            <p class="{{ category }}">{{ msg }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      {% block content %}{% endblock %}
     </main>
   </body>
 </html>
