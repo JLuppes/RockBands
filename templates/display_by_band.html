@@ -17,27 +17,27 @@
 
     <h4>Members</h4>
     <ul>
-        {% for member in band.members %}
+    {% for member in band.members %}
         <li><a href="{{ url_for('view_member', id=member.MemberID) }}">{{ member.MemberName }}</a> – {{ member.MainPosition }}</li>
-        {% endfor %}
+    {% endfor %}
     </ul>
 
     <h4>Albums</h4>
     <ul>
-        {% for album in band.albums %}
+    {% for album in band.albums %}
         <li>
             <a href="{{ url_for('view_album', id=album.AlbumID) }}">{{ album.AlbumTitle }}</a> ({{ album.ReleaseYear }})
             {% if album.bands|length > 1 %}
             <br><em>Collaboration with: 
             {% for collab_band in album.bands %}
-                {% if collab_band.BandID != band.BandID %}
-                    <a href="{{ url_for('view_band', id=collab_band.BandID) }}">{{ collab_band.BandName }}</a>{% if not loop.last %}, {% endif %}
-                {% endif %}
+            {% if collab_band.BandID != band.BandID %}
+                <a href="{{ url_for('view_band', id=collab_band.BandID) }}">{{ collab_band.BandName }}</a>{% if not loop.last %}, {% endif %}
+            {% endif %}
             {% endfor %}
             </em>
             {% endif %}
         </li>
-        {% endfor %}
+    {% endfor %}
     </ul>
 </section>
 <hr>

@@ -17,7 +17,7 @@ db = SQLAlchemy(app)
 # DATABASE MODELS
 # ==========================
 
-# Association table for many-to-many relationship between Bands and Albums
+# Association table for many-to-many
 band_album = db.Table('band_album',
     db.Column('BandID', db.Integer, db.ForeignKey('bands.BandID'), primary_key=True),
     db.Column('AlbumID', db.Integer, db.ForeignKey('albums.AlbumID'), primary_key=True)
@@ -28,9 +28,7 @@ class Bands(db.Model):
     BandName = db.Column(db.String(80), nullable=False)
     FormedYear = db.Column(db.Integer)
     HomeLocation = db.Column(db.String(80))
-    # Relationship: One band has many members
     members = db.relationship('Members', backref='band', lazy=True)
-    # Many-to-many relationship with albums
     albums = db.relationship('Albums', secondary=band_album, backref=db.backref('bands', lazy=True), lazy=True)
 
 class Members(db.Model):
@@ -67,7 +65,7 @@ def add_band():
 
 @app.route('/members/add', methods=['GET', 'POST'])
 def add_member():
-    bands = Bands.query.all()  # Students see querying with relationships
+    bands = Bands.query.all()
     if request.method == 'POST':
         new_member = Members(
             MemberName=request.form['membername'],
@@ -87,7 +85,6 @@ def add_album():
             AlbumTitle=request.form['albumtitle'],
             ReleaseYear=request.form['releaseyear']
         )
-        # Get selected bands (multiple selection)
         selected_band_ids = request.form.getlist('bandids')
         for band_id in selected_band_ids:
             band = Bands.query.get(band_id)
@@ -106,7 +103,6 @@ def view_by_band():
 
 @app.route('/bands/view/<int:id>')
 def view_band(id):
-    # Shows real database relationship querying
     band = Bands.query.get_or_404(id)
     return render_template('display_by_band.html', bands=[band])
 
