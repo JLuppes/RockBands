@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Albums</h2>
+
+{% if albums %}
+  {% for album in albums %}
+    <section>
+      <h3>{{ album.AlbumTitle }}{% if album.ReleaseYear %} ({{ album.ReleaseYear }}){% endif %}</h3>
+
+      <p><strong>Bands on this album:</strong>
+        {% if album.bands %}
+          {% for band in album.bands %}
+            {# Link to the band detail page if you want #}
+            <a href="{{ url_for('view_band', id=band.BandID) }}">{{ band.BandName }}</a>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          <em>No bands associated.</em>
+        {% endif %}
+      </p>
+    </section>
+    <hr>
+  {% endfor %}
+{% else %}
+  <p><em>No albums in the database yet.</em></p>
+{% endif %}
+
+{% endblock %}
