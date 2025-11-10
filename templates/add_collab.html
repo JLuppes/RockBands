@@ -1,0 +1,30 @@
+{%extends "base.html"%}
+{%block content%}
+<h2>Add Album Collab</h2>
+<form method="POST">
+    <label for="albumid">Album:</label>
+    <select name="albumid" id="albumid" required>
+        <option value="">-Select Album-</option>
+        {%for album in albums%}
+            <option value="{{album.AlbumID}}">{{album.AlbumTitle}} ({{album.ReleaseYear}})</option>
+            {%endfor%}
+    </select>
+    <br><br>
+
+    <label for="bandid">-Collaborating Band-</label>
+    <select name="bandid" id="bandid" required>
+        <option value="">-Select Band-</option>
+        {%for band in bands%}
+            <option value="{{band.BandID}}">{{band.BandName}}</option>
+            {%endfor%}
+    </select>
+    <br><br>
+
+    <label for="role">-Role-</label>
+    <input type="Text" name="role" id="role" placeholder="e.g., Featured Artist, Guest, Prod">
+    <br><br>
+
+    <button type="submit">Submit</button>
+    <a href="{{url_for('view_by_band')}}">Cancel</a>
+</form>
+{%endblock%}

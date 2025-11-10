@@ -23,6 +23,7 @@ class Albums(db.Model):
     BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+    collaborations = db.relationship('Collaborations', backref='album', lazy=True)
 
 class Bands(db.Model):
     BandID = db.Column(db.Integer, primary_key=True)
@@ -31,6 +32,7 @@ class Bands(db.Model):
     HomeLocation = db.Column(db.String(80))
     memberships = db.relationship('Memberships', backref='band', lazy=True)
     albums = db.relationship('Albums', backref='band', lazy=True)
+    collaborations = db.relationship('Collaborations', backref='collaborating_band', lazy=True)      
 
 class Members(db.Model):
     MemberID = db.Column(db.Integer, primary_key=True)
@@ -228,11 +230,33 @@ def delete_album(id):
 
 @app.route('/collaborations/add', methods=['GET', 'POST'])
 def add_collaboration():
+    albums=Albums.query.all()
+    bands=Bands.query.all()
+    if request.method =='POST':
+        collaborations=Collaborations(
+            AlbumID=request.form.get('albumid'), 
+            BandID=request.form.get('bandid'),
+            Role=request.form.get('role')
+        )
+        db.session.add(collaborations)
+        db.session.commit()
+        flash('Collaboration Linked', 'success')
+        return redirect(url_for('view_by_band'))
+    return render_template('add_collab.html', albums=albums, bands=bands)
 
 @app.route('/collaborations/edit/<int:id>', methods=['GET', 'POST'])
 def edit_collaboration(id):
     collaboration = Collaborations.query.get_or_404(id)
-
+    albums=Albums.query.all()
+    bands=Bands.query.all()
+    if request.method == 'POST':
+        collaboration.AlbumID = request.form.get('albumid')
+        collaboration.BandID = request.form.get('bandid')
+        collaboration.Role = request.form.get('role')
+        db.session.commit()
+        flash('Collaboration has been updated', 'success')
+        return redirect(url_for('view_by_band'))
+    return render_template('edit_collaboration.html', collaborations=collaborations, albums=albums, bands=bands)
 
 @app.route('/collaborations/delete/<int:id>')
 def delete_collaboration(id):

@@ -33,6 +33,21 @@
             {{ album.AlbumTitle }} ({{ album.ReleaseYear }})
             <a href="{{ url_for('edit_album', id=album.AlbumID) }}">Edit</a> |
             <a href="{{ url_for('delete_album', id=album.AlbumID) }}">Delete</a>
+            {%if album.collaborations%}
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Collaborations:</strong>
+                <ul style="margin-top: 5px;">
+                    {%for collab in album.collaborations%}
+                        <li>
+                            {{collab.collaborating_band.BandName}}
+                            {%if collab.Role%} - {{collab.Role}}{%endif%}
+                            &nbsp;
+                            <a href="{{url_for('edit_collaboration', id=collab.CollaborationID)}}">Edit</a> |
+                            <a href="{{url_for('delete_collaboration', id=collab.CollaborationID)}}"
+                                onclick="return confirm('Delete Collab?')">Delete</a>
+                        </li>
+                    {%endfor%}
+                </ul>
+            {%endif%}
         </li>
         {% else %}
         <li><em>No albums</em></li>
