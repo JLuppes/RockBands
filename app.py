@@ -18,6 +18,10 @@ db = SQLAlchemy(app)
 # DATABASE MODELS
 # ==========================
 
+band_albums = db.Table('band_albums',
+    db.Column('BandID', db.Integer, db.ForeignKey('bands.BandID'), primary_key=True),
+    db.Column('AlbumID', db.Integer, db.ForeignKey('albums.AlbumID'), primary_key=True)
+)
 
 class Bands(db.Model):
     BandID = db.Column(db.Integer, primary_key=True)
@@ -27,8 +31,8 @@ class Bands(db.Model):
     # Relationship: One band has many members + albums
     # members = db.relationship('Members', backref='band', lazy=True)
     memberships = db.relationship('Memberships', backref='band', lazy=True)
-    albums = db.relationship('Albums', backref='band', lazy=True)
     songs = db.relationship('Songs', backref='band', lazy=True)
+    albums = db.relationship('Albums', secondary=band_albums, back_populates='bands', lazy='subquery')
 
 
 class Members(db.Model):
@@ -37,7 +41,7 @@ class Members(db.Model):
     MemberName = db.Column(db.String(80), nullable=False)
     MainPosition = db.Column(db.String(80))
     memberships = db.relationship('Memberships', backref='member', lazy=True)
-    song_memberships = db.relationship('SongMembers', backref='member', lazy=True)
+    song_memberships = db.relationship('SongMembers', back_populates='member', lazy=True)
 
 
 class Memberships(db.Model):
@@ -51,10 +55,10 @@ class Memberships(db.Model):
 
 class Albums(db.Model):
     AlbumID = db.Column(db.Integer, primary_key=True)
-    BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
     songs = db.relationship('Songs', backref='album', lazy=True)
+    bands = db.relationship('Bands', secondary=band_albums, back_populates='albums', lazy='subquery')
 
 class Songs(db.Model):
     SongID = db.Column(db.Integer, primary_key=True)
@@ -64,13 +68,16 @@ class Songs(db.Model):
     Release_Type = db.Column(db.String(5), nullable=False)
     MediaFormat = db.Column(db.String(12), nullable=False)
     SongReleaseYear = db.Column(db.Integer, nullable=False)
-    song_members = db.relationship('SongMembers', backref='song', lazy=True)
+    song_members = db.relationship('SongMembers', back_populates='song', lazy=True)
 
 class SongMembers(db.Model):
     SongMemberID = db.Column(db.Integer, primary_key=True)
     SongID = db.Column(db.Integer, db.ForeignKey('songs.SongID'), nullable=False)
     MemberID = db.Column(db.Integer, db.ForeignKey('members.MemberID'), nullable=False)
     Role = db.Column(db.String(80), nullable=False)
+    song = db.relationship('Songs', back_populates='song_members')
+    member = db.relationship('Members', back_populates='song_memberships')
+
 
 
 # ==========================
@@ -119,8 +126,14 @@ def add_album():
         new_album = Albums(
             AlbumTitle=request.form['albumtitle'],
             ReleaseYear=request.form['releaseyear'],
-            BandID=request.form['bandid']
+            
         )
+
+        selected_band_ids = request.form.getlist('bandid')
+        if selected_band_ids:
+            selected_bands = Bands.query.filter(Bands.BandID.in_(selected_band_ids)).all()
+            new_album.bands.extend(selected_bands)
+    
         db.session.add(new_album)
         db.session.commit()
         flash('Album added successfully', 'success')
@@ -249,7 +262,7 @@ def view_member(id):
     album_ids = {s.AlbumID for s in songs}
     albums = Albums.query.filter(Albums.AlbumID.in_(album_ids)).all()
 
-    return render_template('display_by_member.html', member=member, songs=songs, albums=albums)
+    return render_template('display_by_member.html', member=member, songs=songs, albums=albums, all_members=all_members)
 
 
 @app.route('/song/<int:id>')
@@ -259,8 +272,21 @@ def view_song(id):
     song_members = song.song_members
     members = [sm.member for sm in song_members]
 
-    return render_template('view_song.html', song=song, members=members, all_songs=all_songs)
+    album = song.album
+    bands = album.bands if album else []
 
+    return render_template('view_song.html', song=song, members=members, album=album, bands=bands, all_songs=all_songs)
+
+
+@app.route('/admin/data')
+def manage_data():
+    bands = Bands.query.all()
+    members = Members.query.all()
+    albums = Albums.query.all()
+    songs = Songs.query.all()
+    memberships = Memberships.query.all()
+    song_members = SongMembers.query.all()
+    return render_template('manage_data.html', bands=bands, members=members, albums=albums, songs=songs, memberships=memberships, song_members=song_members)
 
 # Create DB if not exists
 with app.app_context():

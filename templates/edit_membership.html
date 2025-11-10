@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Edit Membership</h2>
+
+<form method="POST" action="{{ url_for('edit_membership', id=membership.MembershipID) }}">
+    
+    <label for="bandid"><strong>Band:</strong></label>
+    <select name="bandid" id="bandid" required>
+        {% for band in bands %}
+            <option value="{{ band.BandID }}" {% if band.BandID == membership.BandID %}selected{% endif %}>
+                {{ band.BandName }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="memberid"><strong>Member:</strong></label>
+    <select name="memberid" id="memberid" required>
+        {% for member in members %}
+            <option value="{{ member.MemberID }}" {% if member.MemberID == membership.MemberID %}selected{% endif %}>
+                {{ member.MemberName }}
+            </option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="role"><strong>Role:</strong></label>
+    <input type="text" name="role" id="role" value="{{ membership.Role or '' }}">
+    <br><br>
+
+    <label for="startyear"><strong>Start Year:</strong></label>
+    <input type="number" name="startyear" id="startyear" value="{{ membership.StartYear or '' }}">
+    <br><br>
+
+    <label for="endyear"><strong>End Year:</strong></label>
+    <input type="number" name="endyear" id="endyear" value="{{ membership.EndYear or '' }}">
+    <br><br>
+
+    <button type="submit">Save Changes</button>
+</form>
+
+<hr>
+
+<a href="{{ url_for('view_by_band') }}">← Back to Band List</a>
+
+{% endblock %}

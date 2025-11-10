@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>View Song:</h2>
+<h2>View Song: {{ song.Song_title }}</h2>
 
 <form id="songSelectorForm">
     <label for="songSelector"><strong>Select a Song:</strong></label>
     <select id="songSelector" name="songSelector" >
         <option value="">-- Select a Song --</option>
         {% for s in all_songs %}
-            <option value="{{ url_for('view_song', id=s.SongID) }}" 
-                {% if s.SongID == song.SongID %}selected{% endif %}>
+            <option value="{{ url_for('view_song', id=s.SongID) }}" {% if s.SongID == song.SongID %}selected{% endif %}>
             {{ s.Song_title }}
         </option>
     {% endfor %}
@@ -20,10 +19,24 @@
 
 <section>
 <h3>Song Details:</h3>
-<p><strong>Band:</strong> {{ song.band.BandName }}</p>
+
 <p><strong>Title:</strong> {{ song.Song_title }}</p>
-<p><strong>Album:</strong> {{ song.AlbumTitle }}</p>
-<p><strong>Release Type:</strong> {{ song.ReleaseType }}</p>
+
+{% if song.band %}
+<p><strong>Band:</strong> {{ song.band.BandName }}</p>
+{% endif %}
+
+{% if song.album %}
+<p><strong>Album:</strong>
+    <a href="{{ url_for('view_album', id=song.album.AlbumID) }}">
+        {{ song.album.AlbumTitle }}
+    </a>
+    ({{ song.album.ReleaseYear or 'N/A' }})
+
+</p>
+{% endif %}
+
+<p><strong>Release Type:</strong> {{ song.Release_Type }}</p>
 <p><strong>Media Format:</strong> {{ song.MediaFormat }}</p>
 <p><strong>Release Year:</strong> {{ song.SongReleaseYear }}</p>
 </section>
@@ -36,7 +49,11 @@
     <ul>
     {% for member in members %}
         <li>
-            {{ member.MemberName }} - {{ member.MainPosition }}</li>
+            {{ member.MemberName }}
+            {% for sm in song.song_members if sm.MemberID == member.MemberID %} 
+            - {{ sm.Role }}
+            {% endfor %}
+        </li>
     {% endfor %}
     </ul>
   {% else %}
@@ -50,11 +67,14 @@
 <a href="{{ url_for('add_songmember') }}">+ Add Member to Song</a>
 
 <script>
-    document.getElementById('songSelector').addEventListener('change', function() {
-        var selectedUrl = this.value;
-        if (selectedUrl) {
-            window.location.href = selectedUrl;
-        }
-    }); 
+document.getElementById('songSelector').addEventListener('change', function() {
+    var selectedUrl = this.value;
+    if (selectedUrl) {
+        window.location.href = selectedUrl;
+    }
+});
+
 </script>
+
+
 {% endblock %}

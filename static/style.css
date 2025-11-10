@@ -1,8 +1,217 @@
-body { 
-    color:white ;
-    font-family: Arial, sans-serif; 
-    margin: 20px;
-    background-color: darkolivegreen; }
-header { margin-bottom: 20px; }
-label { width: 120px; display: inline-block; }
-button { margin-top: 10px; }
+/* === FUTURISTIC ROCK THEME === */
+body {
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at 20% 30%, #1b1c1e 0%, #0a0a0a 90%);
+  color: #e6e6e6;
+  margin: 0;
+  min-height: 100vh;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+/* HEADER / TITLE BAR */
+.site-header {
+  background: linear-gradient(90deg, #0d0d0d, #1b1c1e);
+  color: #d9d9d9;
+  text-align: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #b12a3a;
+  box-shadow: 0 0 12px rgba(177, 42, 58, 0.6);
+}
+
+.site-header h1 {
+  font-size: 2rem;
+  color: #f5f5f5;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px #b12a3a, 0 0 30px #0055ff;
+}
+
+/* NAV LINKS */
+nav a {
+  color: #e8b923;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 0 0.7rem;
+  transition: 0.3s;
+}
+nav a:hover {
+  color: #00bfff;
+  text-shadow: 0 0 8px #00bfff;
+}
+
+/* SECTIONS / HEADERS */
+h2, h3, h4 {
+  color: #f1f1f1;
+  border-left: 4px solid #b12a3a;
+  padding-left: 10px;
+  text-shadow: 0 0 10px #b12a3a80;
+}
+
+/* BUTTONS */
+button, .btn {
+  background: linear-gradient(90deg, #b12a3a, #0055ff);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-transform: uppercase;
+}
+button:hover, .btn:hover {
+  box-shadow: 0 0 15px #e8b923;
+  transform: translateY(-2px);
+}
+
+/* TABLES */
+table {
+  width: 95%;
+  margin: 1rem auto;
+  border-collapse: collapse;
+  background: rgba(25, 25, 25, 0.85);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+th, td {
+  padding: 0.8rem 1rem;
+  border: 1px solid #333;
+}
+th {
+  background: linear-gradient(90deg, #2a2a2a, #1b1c1e);
+  color: #e8b923;
+  text-shadow: 0 0 8px #b12a3a;
+}
+td {
+  color: #ccc;
+}
+tr:hover {
+  background: rgba(177, 42, 58, 0.15);
+}
+
+/* LINKS */
+a {
+  color: #b12a3a;
+  text-decoration: none;
+}
+a:hover {
+  color: #00bfff;
+  text-shadow: 0 0 6px #00bfff;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #0d0d0d;
+  color: #666;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+}
+
+
+
+/* Fix bullet list indentation */
+ul {
+  list-style-position: inside;      /* Moves bullets inside the content box */
+  padding-left: 1rem;              /* Adds proper spacing */
+  margin-left: 0;                  /* Removes the default offset */
+}
+
+/* Optional: custom glowing bullets for futuristic style */
+ul li::marker {
+  color: #b12a3a;                  /* crimson accent */
+  text-shadow: 0 0 6px #b12a3a;
+}
+
+
+
+
+
+/* === FORM LAYOUT FIX (Grid-Aligned + Futuristic Theme) === */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(25, 25, 25, 0.7);
+  border: 1px solid #b12a3a50;
+  border-radius: 12px;
+  box-shadow: 0 0 25px rgba(16, 160, 226, 0.3), inset 0 0 15px rgba(177, 42, 58, 0.3);
+}
+
+/* Use grid alignment for fields */
+.form-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 0.8rem;
+}
+
+.form-row label {
+  text-align: right;
+  color: #e6e6e6;
+  font-weight: 500;
+}
+
+.form-row input[type="text"],
+.form-row select {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0f0f0f;
+  color: #fff;
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.3s;
+}
+.form-row input[type="text"]:focus,
+.form-row select:focus {
+  box-shadow: 0 0 10px #0055ff;
+  outline: none;
+}
+
+/* Radio group styling */
+fieldset {
+  border: none;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+fieldset legend {
+  color: #e8b923;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+fieldset label {
+  margin: 0 1rem;
+  color: #ccc;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  accent-color: #b12a3a;
+}
+
+/* Button */
+button {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.6rem;
+  background: linear-gradient(90deg, #b12a3a, #0055ff);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+button:hover {
+  box-shadow: 0 0 15px #e8b923;
+  transform: translateY(-2px);
+}

@@ -23,17 +23,24 @@
     <label>Song Release Year:</label>
         <input type="number" name="songreleaseyear"><br>
 
-    <label>Release Type:</label><br>
-        <input type="radio" name="releasetype" value="Single">Single<br>
-        <input type="radio" name="releasetype" value="EP">EP<br>
-        <input type="radio" name="releasetype" value="Album">Album<br>  
+    <fieldset>         
+    <legend>Release Type:</legend>
+    <div>
+        <label><input type="radio" name="releasetype" value="Single">Single</label>
+        <label><input type="radio" name="releasetype" value="EP">EP</label>
+        <label><input type="radio" name="releasetype" value="Album">Album</label>
+    </div> 
+    </fieldset> 
 
-    <label>Media Format:</label><br>
-        <input type="radio" name="mediarelease" value="CD">CD<br>
-        <input type="radio" name="mediarelease" value="Vinyl">Vinyl<br>
-        <input type="radio" name="mediarelease" value="Digital">Digital<br>
-        <input type="radio" name="mediarelease" value="Cassette">Cassette<br>
-    
+    <fieldset>
+    <legend>Media Format:</legend>
+    <div>  
+        <label><input type="radio" name="mediarelease" value="CD">CD</label>
+        <label><input type="radio" name="mediarelease" value="Vinyl">Vinyl</label>
+        <label><input type="radio" name="mediarelease" value="Digital">Digital</label>
+        <label><input type="radio" name="mediarelease" value="Cassette">Cassette</label>
+    </div>
+    </fieldset>
 
     <button type="submit">Save</button>
 

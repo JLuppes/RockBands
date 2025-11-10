@@ -1,36 +1,76 @@
 {% extends "base.html" %} {% block content %}
 <h2>Bands</h2>
 
-{% for band in bands %}
-<section>
-  <h3>
-    {{ band.BandName }} ({{ band.FormedYear }}) {#
-    <a href="{{url_for('edit_band', id=band.BandID)}}">Edit</a>
-    <a href="{{url_for('delete_band', id=band.BandID)}}">Delete</a> #}
-  </h3>
-  <p><strong>Home:</strong> {{ band.HomeLocation }}</p>
+<div style="margin-bottom:1em;"></div>
+  <label for="bandsearch"><strong>Search Bands:</strong></label>
+  <input type="text" id="bandsearch" placeholder="Enter band name..." style="width: 50%; padding:0.5em;">
+</div>
 
-  <h4>Members</h4>
-  <ul>
-    {% for m in band.memberships %}
-    <li>
-      {{ m.member.MemberName }} – {{ m.Role or m.member.MainPosition }} {% if
-      m.StartYear %} ({{ m.StartYear }}{% if m.EndYear %} – {{ m.EndYear }}{%
-      else %} – present{% endif %}){% endif %} &nbsp;
-      <a href="{{ url_for('edit_membership', id=m.MembershipID) }}">Edit</a> |
-      <a href="{{ url_for('delete_membership', id=m.MembershipID) }}">Delete</a>
-    </li>
-    {% else %}
-    <li><em>No members assigned yet</em></li>
-    {% endfor %}
-  </ul>
+<div id="band-list">
+  {% for band in bands %}
+  <section class="band-item">
+    <h3>
+      {{ band.BandName }} ({{ band.FormedYear or "Unknown" }}) 
+      </h3>
+      <p><strong>Home:</strong> {{ band.HomeLocation or "Unknown" }}</p>
 
-  <h4>Albums</h4>
-  <ul>
-    {% for album in band.albums %}
-    <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }})</li>
-    {% endfor %}
-  </ul>
-</section>
-<hr />
-{% endfor %} {% endblock %}
+      <h4>Members</h4>
+      <ul>>
+        {% for m in band.memberships %}
+        <li>
+          <a href="{{ url_for('view_member', id=m.member.MemberID) }}">{{ m.member.MemberName }}</a> – {{ m.Role or m.member.MainPosition or "Unknown" }}
+          {% if m.StartYear %}{% if m.EndYear %} – {{ m.EndYear }}{% else %} – present{% endif %})
+          {% endif %}
+          &nbsp;
+          <a href="{{ url_for('edit_membership', id=m.MembershipID) }}">Edit</a> |
+          <a href="{{ url_for('delete_membership', id=m.MembershipID) }}">Delete</a>
+        </li>
+        {% else %}
+        <li><em>No members assigned yet</em></li>
+        {% endfor %}
+      </ul>
+
+      <h4>Albums</h4>
+      <ul>
+        {% for album in band.albums %}
+        <li>
+          <a href="{{ url_for('view_album', id=album.AlbumID) }}">{{ album.AlbumTitle }}</a> ({{ album.ReleaseYear or "N/A" }})
+        <br>
+
+
+        <small><em>Collaborating Bands:</em>
+          {% set collab_bands = album.bands | rejectattr('BandID', 'equalto', band.BandID) | list %}
+          {% if collab_bands %}
+            {% for b in collab_bands %}
+              <a href="{{ url_for('view_band', id=b.BandID)  }}">{{ b.BandName }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          {% else %}
+          <em>None</em>
+          {% endif %}
+        </small>
+        </li> 
+        {% else %}
+        <li><em>No albums found for this band.</em></li>
+        {% endfor %}
+      </ul>
+      </section>
+      <hr />
+  {% endfor %}
+</div>
+
+
+<script>
+document.getElementById('bandsearch').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const bands = document.querySelectorAll('.band-item');
+
+    bands.forEach(function(band) {
+        const name = band.querySelector('h3').textContent.toLowerCase();
+        band.style.display = name.includes(searchTerm) ? '' : 'none';
+    });
+});
+        
+</script>
+
+
+ {% endblock %}

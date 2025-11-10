@@ -11,8 +11,15 @@
         {% for a in all_albums %}
             <option value="{{ url_for('view_album', id=a.AlbumID) }}" 
                 {% if a.AlbumID == album.AlbumID %}selected{% endif %}>
-            {{ a.AlbumTitle }} ({{ a.band.BandName }})
-        </option>
+            {{ a.AlbumTitle }}
+            {% if a.band %}
+            (
+            {% for b in a.bands %}
+                {{ b.BandName }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+            )
+        {% endif %}
+    </option>
     {% endfor %}
 </select>
 </form>
@@ -21,8 +28,15 @@
 
 <section>
     <h3>{{ album.AlbumTitle }}</h3>
-    <p><strong>Band:</strong> {{ album.band.BandName }}</p>
-    <p><strong>Release Year:</strong> {{ album.ReleaseYear }}</p>
+    <p><strong>Band(s):</strong>
+        {% if album.bands %}
+            {% for b in album.bands %}
+                {{ b.BandName }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% else %}
+            <em>No band linked yet.</em>
+        {% endif %}
+    <p><strong>Release Year:</strong> {{ album.ReleaseYear or 'N/A' }}</p>
 </section>
 
 <hr>
@@ -58,7 +72,9 @@
 
 <script>
     document.getElementById('albumSelector').addEventListener('change', function() {
-        if (this.value) {window.location.href = this.value;
+        if (this.value) {
+            window.location.href = this.value;
+        }
     });
 
 </script>
