@@ -27,7 +27,7 @@ class Bands(db.Model):
     # Relationship: One band has many members + albums
     # members = db.relationship('Members', backref='band', lazy=True)
     memberships = db.relationship('Memberships', backref='band', lazy=True)
-    albums = db.relationship('Albums', backref='band', lazy=True)
+    collaborations = db.relationship('Collaborations', backref='band', lazy=True)
 
 
 class Members(db.Model):
@@ -48,13 +48,21 @@ class Memberships(db.Model):
     EndYear = db.Column(db.Integer)  # NULL if still active
     Role = db.Column(db.Text)
 
+class Collaborations(db.Model):
+    CollaborationsID = db.Column(db.Integer, primary_key=True)
+    BandID = db.Column(db.Integer, db.ForeignKey(
+        'bands.BandID'), nullable=False)
+    AlbumID = db.Column(db.Integer, db.ForeignKey(
+        'albums.AlbumID'), nullable=False)
+    CollabYear = db.Column(db.Integer)  
+
 
 class Albums(db.Model):
     AlbumID = db.Column(db.Integer, primary_key=True)
-    BandID = db.Column(db.Integer, db.ForeignKey(
-        'bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+    collaborations = db.relationship('Collaborations', backref='album', lazy=True)
+
 
 # ==========================
 # ROUTES
@@ -102,7 +110,6 @@ def add_album():
         new_album = Albums(
             AlbumTitle=request.form['albumtitle'],
             ReleaseYear=request.form['releaseyear'],
-            BandID=request.form['bandid']
         )
         db.session.add(new_album)
         db.session.commit()
@@ -141,6 +148,22 @@ def add_membership():
         return redirect(url_for('view_by_band'))
     return render_template('add_membership.html', bands=bands, members=members)
 
+@app.route('/collaborations/add', methods=['GET', 'POST'])
+def add_collaboration():
+    bands = Bands.query.all()
+    albums = Albums.query.all()
+    if request.method == 'POST':
+        collaboration = Collaborations(
+            BandID=request.form.get('bandid'),
+            AlbumID=request.form.get('albumid'),
+            CollabYear=request.form.get('collabyear') or None,
+        )
+        db.session.add(collaboration)
+        db.session.commit()
+        flash('Collaboration assigned', 'success')
+        return redirect(url_for('view_by_band'))
+    return render_template('add_collaboration.html', bands=bands, albums=albums)
+
 
 
 @app.route('/memberships/edit/<int:id>', methods=['GET', 'POST'])
@@ -160,6 +183,20 @@ def edit_membership(id):
 
     return render_template('add_membership.html', membership=membership, bands=bands, members=members)
 
+@app.route('/collaborations/edit/<int:id>', methods=['GET', 'POST'])
+def edit_collaborations(id):
+    collaboration = Collaborations.query.get_or_404(id)
+    bands = Bands.query.all()
+    albums = Albums.query.all()
+    if request.method == 'POST':
+        collaboration.BandID = request.form.get('bandid')
+        collaboration.AlbumID = request.form.get('albumid')
+        collaboration.Collab = request.form.get('year')
+        db.session.commit()
+        flash('Collaboration updates', 'success')
+        return redirect(url_for('view_by_band'))
+
+    return render_template('add_collaboration.html', collaboration=collaboration, bands=bands, albums=albums)
 
 @app.route('/memberships/delete/<int:id>')
 def delete_membership(id):
@@ -167,6 +204,14 @@ def delete_membership(id):
     db.session.delete(membership)
     db.session.commit()
     flash('Membership removed', 'success')
+    return redirect(url_for('view_by_band'))
+
+@app.route('/collaborations/delete/<int:id>')
+def delete_collaborations(id):
+    collaboration = Collaborations.query.get_or_404(id)
+    db.session.delete(collaboration)
+    db.session.commit()
+    flash('Collaboration removed', 'success')
     return redirect(url_for('view_by_band'))
 
 
