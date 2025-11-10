@@ -5,12 +5,13 @@
     <label>Album Title:</label><input type="text" name="albumtitle"><br>
     <label>Release Year:</label><input type="number" name="releaseyear"><br>
 
-    <label>Band:</label>
-    <select name="bandid">
+    <label>Bands:</label>
+    <select name="bands" multiple size="5">
         {% for band in bands %}
         <option value="{{ band.BandID }}">{{ band.BandName }}</option>
         {% endfor %}
-    </select><br>
+    </select>
+    <p><small>Hold Ctrl (Windows) or Command (Mac) to select multiple bands.</small></p>
 
     <button type="submit">Save</button>
 </form>
