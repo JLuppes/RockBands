@@ -1,17 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Add Album</h2>
-<form method="post">
-    <label>Album Title:</label><input type="text" name="albumtitle"><br>
-    <label>Release Year:</label><input type="number" name="releaseyear"><br>
+    <h2>Add Album</h2>
 
-    <label>Band:</label>
-    <select name="bandid">
-        {% for band in bands %}
-        <option value="{{ band.BandID }}">{{ band.BandName }}</option>
-        {% endfor %}
-    </select><br>
+   
+    <form method="post">
 
-    <button type="submit">Save</button>
-</form>
-{% endblock %}
+        <label>Album Title:</label><input type="text" name="albumtitle"><br>
+        <label>Release Year:</label><input type="number" name="releaseyear"><br>
+    
+        <label>Primary Band:</label>
+        <select name="bandid">
+            {% for band in bands %}
+            <option value="{{ band.BandID }}">{{ band.BandName }}</option>
+            {% endfor %}
+        </select><br>
+
+        <h3>Contributing Bands:</h3>
+        <div id="checkboxContainers">
+        {% if bands %}
+            {% for band in bands %}
+            <div class="checkboxContainer">
+                <input id="band_{{ band.BandID }}" type="checkbox" name="checkboxContainer" value="{{ band.BandID }}">
+                <label for="band_{{band.BandName}}">{{ band.BandName }}</label>            
+                <div class="tick_mark"></div>
+                    
+            </div>      
+            {% endfor %}
+        {% else %}
+            <p style="color: #d32f2f;">Error loading bands. Please refresh the page.</p>
+        {% endif %}
+        </div>
+        <button type="submit">Save</button>
+
+    </form>
+   
+{% endblock content %}
+
