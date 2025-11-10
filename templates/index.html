@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Welcome!</h2>
-<p>Use the navigation links above.</p>
+
+
+
+<h2 style="text-align: center; margin-top: 10px;">Welcome!</h2>
+
+<div style="text-align: center; margin: 25px 0;">
+    <img src="{{ url_for('static', filename='images/Stars and Rock.png') }}" 
+            alt="Rock Band with Star in the sky" 
+            style="max-width: 60%; height: auto; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.6);">
+</div>
+
+<p style="text-align: center; font-size: 1.2em;">
+    Explore legendary <strong>Bands</strong>, iconic <strong>Albums</strong>, and timeless <strong>Songs</strong>.<br>
+    Use the navigation links above to get started and manage the collection.
+</p>
 {% endblock %}

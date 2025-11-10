@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Assign Member to Song</h2>
+<form method="post" id="songMemberForm">
+    <label>Song:</label>
+    <select name="songid">
+        <option value="">-- select song --</option>
+        {% for song in songs %}
+        <option value="{{ song.SongID }}">{{ song.Song_title }}</option>
+        {% endfor %}
+    </select><br />
+
+    <label>Member:</label>
+    <select name="memberid">
+        <option value="">-- select member --</option>
+        {% for member in members %}
+        <option value="{{ member.MemberID }}">{{ member.MemberName }}</option>
+        {% endfor %}
+    </select><br />
+
+    <label>Role:</label>
+    <input type="text" name="role" placeholder="e.g. Vocals, Drums, Guitar" required><br />
+
+    <button type="submit">Save Assignment</button>
+</form>
+{% endblock %}

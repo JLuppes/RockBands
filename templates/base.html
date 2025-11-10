@@ -11,20 +11,36 @@
   <body>
     <header>
       <h1>Collection of Great Rock Bands</h1>
-      <nav>
-        <a href="{{ url_for('index') }}">Home</a> |
+      <nav class="main-nav-views">
+        <a href="{{ url_for('index') }}">Home</a> | 
+        <a href="{{ url_for('view_by_band') }}">View Bands</a> |
+        <a href="{{ url_for('view_member', id=1) }}">View Member</a> |
+        <a href="{{ url_for('view_song', id=1) }}">View Song</a> |
+        <a href="{{ url_for('view_album', id=1) }}">View Album</a> |
+        
+      </nav>
+      <br>
+      <nav class="main-nav-adds">
         <a href="{{ url_for('add_band') }}">Add Band</a> |
         <a href="{{ url_for('add_member') }}">Add Member</a> |
         <a href="{{ url_for('add_album') }}">Add Album</a> |
         <a href="{{ url_for('add_membership') }}">Add Membership</a> |
-        <a href="{{ url_for('view_by_band') }}">View Band Info</a>
+        <a href="{{ url_for('add_song') }}">Add Song</a> |
+        <a href="{{ url_for('add_songmember') }}">Add Song Member</a> |
+        <a href="{{ url_for('manage_data') }}">Admin Updates</a> |
+
       </nav>
     </header>
     <main>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, msg in messages %}
-      <p class="{{ category }}">{{ msg }}</p>
-      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+      {% with messages = get_flashed_messages(with_categories=true) %}  
+        {% if messages %} 
+          {% for category, msg in messages %}
+            <p class="{{ category }}">{{ msg }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      {% block content %}{% endblock %}
     </main>
   </body>
 </html>

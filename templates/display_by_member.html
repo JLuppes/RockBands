@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<h2>View Member</h2>
+
+<form id="memberSelectorForm">
+    <label for="memberSelector"><strong>Select a Member:</strong></label>
+    <select id="memberSelector" name="memberSelector" >
+        <option value="">-- Select a Member --</option>
+        {% for m in all_members %}
+            <option value="{{ url_for('view_member', id=m.MemberID) }}" 
+                {% if m.MemberID == member.MemberID %}selected{% endif %}>
+            {{ m.MemberName }}
+        </option>
+    {% endfor %}
+</select>
+</form>
+
+
+<hr>
+
+<section>
+    <h3>{{ member.MemberName }}</h3>
+<p><strong>Main Position:</strong> {{ member.MainPosition or 'N/A' }}</p>
+</section>
+
+<hr>
+
+<section>
+    <h4>Songs Featuring {{ member.MemberName }}</h4>
+    {% if songs %}
+        <ul>
+            {% for song in songs %}
+                <li>
+                    <a href="{{ url_for('view_song', id=song.SongID) }}">{{ song.Song_title }}</a> 
+                    {% if song.album %}     
+                    ({{ song.album.AlbumTitle }})
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p><em>No songs linked to this member yet.</em></p>
+    {% endif %}
+</section>
+
+<hr>
+
+<section>
+    <h4>Albums This Member Appears On</h4>
+    {% if albums %}
+    <ul>
+        {% for album in albums %}
+            <li>
+                <a href="{{ url_for('view_album', id=album.AlbumID) }}">{{ album.AlbumTitle }}</a> 
+                <span>
+                    {% if album.bands %}
+                    -  
+                    {% for b in album.bands %}
+                        {{ b.BandName }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+                    ({{ album.ReleaseYear or 'N/A' }})
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p><em>No albums linked to this member yet.</em></p>
+    {% endif %}
+</section>
+
+<script>
+    document.getElementById('memberSelector').addEventListener('change', function() {
+        var selectedUrl = this.value;
+        if (selectedUrl) {
+            window.location.href = selectedUrl;
+        }
+    });
+</script>
+{% endblock %}
