@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block content %}
+<h2>Assign Projects to Band (Projects)</h2>
+<form method="post" id="projectsID">
+  <label>Band:</label>
+  <select name="bandid">
+    <option value="">-- select band --</option>
+    {% for band in bands %}
+    <option value="{{ band.BandID }}">{{ band.BandName }}</option>
+    {% endfor %}</select
+  ><br />
+  <label>Albums</label>
+  <select name="albumsid">
+    <option value="">-- select album --</option>
+    {% for album in Albums %}
+    <option value="{{ album.albumsid }}">{{ album.albumname }}</option>
+    {% endfor %}</select
+  ><br />
+  <label>Role:</label><input type="text" name="role" /><br />
+  <button type="submit">Save Project</button>
+</form>
+{% endblock %}
