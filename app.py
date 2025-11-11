@@ -49,12 +49,20 @@ class Memberships(db.Model):
     Role = db.Column(db.Text)
 
 
+class Projects(db.Model):
+    __table_args__ = {'extend_existing': True}  
+    ProjectsID = db.Column(db.Integer, primary_key=True)
+    BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
+    AlbumsID = db.Column(db.Integer, db.ForeignKey('albums.AlbumID'), nullable=False)
+    Role = db.Column(db.Text)
+
 class Albums(db.Model):
     AlbumID = db.Column(db.Integer, primary_key=True)
     BandID = db.Column(db.Integer, db.ForeignKey(
         'bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+
 
 # ==========================
 # ROUTES
@@ -121,6 +129,31 @@ def view_band(id):
     # Shows real database relationship querying
     band = Bands.query.get_or_404(id)
     return render_template('display_by_band.html', bands=[band])
+
+@app.route('/albums/view/<int:id>')
+def view_albums(id):
+    albums = Albums.query.get_or_404(id)
+    return render_template('display_by_albums.html', albums=[albums])
+
+
+
+
+@app.route('/projects/add', methods=['GET', 'POST'])
+def add_Projects():
+    bands = Bands.query.all()
+    albums = Albums.query.all()
+    if request.method == 'POST':
+        projects = Projects(  
+            BandID=request.form.get('bandid'),
+            AlbumsID=request.form.get('albumsid'),
+            Role=request.form.get('role'),
+        )
+        db.session.add(projects)  
+        db.session.commit()
+        flash('Project assigned', 'success')
+        return redirect(url_for('view_by_band'))
+    return render_template('Projects.html', bands=bands, albums=albums)
+
 
 
 @app.route('/memberships/add', methods=['GET', 'POST'])
