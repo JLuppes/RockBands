@@ -1,4 +1,181 @@
-body { font-family: Arial, sans-serif; margin: 20px; }
-header { margin-bottom: 20px; }
-label { width: 120px; display: inline-block; }
-button { margin-top: 10px; }
+/* Early 2000s Forum Style */
+body { 
+    font-family: Verdana, Arial, sans-serif; 
+    font-size: 12px;
+    margin: 0;
+    padding: 10px;
+    background-color: #e8e8e8;
+    color: #000;
+}
+
+/* Forum header banner */
+header { 
+    background: linear-gradient(to bottom, #4a7ba7, #2c5f8d);
+    color: white;
+    padding: 15px;
+    border: 2px solid #1a4d7a;
+    margin-bottom: 15px;
+    border-radius: 3px;
+}
+
+header h1 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    text-shadow: 2px 2px 3px #000;
+}
+
+/* Navigation bar - classic forum style */
+nav { 
+    background-color: #d4d4d4;
+    padding: 8px;
+    border: 1px solid #999;
+    border-radius: 3px;
+}
+
+nav a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 8px;
+}
+
+nav a:hover {
+    color: #ff6600;
+    text-decoration: underline;
+}
+
+/* Main content area */
+main {
+    background-color: #fff;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #999;
+}
+
+/* Section boxes - like forum posts */
+section {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 3px;
+}
+
+section h3 {
+    background: linear-gradient(to bottom, #ddd, #ccc);
+    color: #333;
+    margin: -15px -15px 10px -15px;
+    padding: 8px 15px;
+    border-bottom: 2px solid #999;
+    font-size: 14px;
+    border-radius: 3px 3px 0 0;
+}
+
+section h4 {
+    color: #003366;
+    font-size: 12px;
+    margin-top: 15px;
+    border-bottom: 1px dotted #999;
+    padding-bottom: 3px;
+}
+
+/* Lists - forum post style */
+ul {
+    list-style-type: square;
+    color: #666;
+}
+
+li {
+    margin: 5px 0;
+    color: #000;
+}
+
+/* Forms - classic input style */
+form {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+label { 
+    width: 150px; 
+    display: inline-block;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    padding: 4px;
+    border: 1px solid #999;
+    background-color: #fff;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 12px;
+    width: 250px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #4a7ba7;
+    background-color: #ffffcc;
+    outline: none;
+}
+
+/* Buttons - classic forum button */
+button { 
+    margin-top: 15px;
+    padding: 6px 20px;
+    background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+    border: 2px outset #999;
+    color: #000;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #fff, #e0e0e0);
+}
+
+button:active {
+    border-style: inset;
+    background: linear-gradient(to bottom, #d0d0d0, #f0f0f0);
+}
+
+/* Horizontal rule - classic forum divider */
+hr {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, #ccc, #999, #ccc);
+    margin: 20px 0;
+}
+
+/* Headings */
+h2 {
+    color: #003366;
+    font-size: 16px;
+    border-bottom: 2px solid #4a7ba7;
+    padding-bottom: 5px;
+    margin-top: 0;
+}
+
+/* Paragraph text */
+p {
+    line-height: 1.6;
+    margin: 10px 0;
+}
+
+/* Strong text - forum emphasis */
+strong {
+    color: #003366;
+}
+
+/* Checkboxes for album selection */
+input[type="checkbox"] {
+    margin-right: 5px;
+}
