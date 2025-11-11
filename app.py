@@ -142,7 +142,7 @@ def add_membership():
     return render_template('add_membership.html', bands=bands, members=members)
 
 
-
+"""
 @app.route('/memberships/edit/<int:id>', methods=['GET', 'POST'])
 def edit_membership(id):
     membership = Memberships.query.get_or_404(id)
@@ -159,7 +159,7 @@ def edit_membership(id):
         return redirect(url_for('view_by_band'))
 
     return render_template('edit_membership.html', membership=membership, bands=bands, members=members)
-
+"""
 
 @app.route('/memberships/delete/<int:id>')
 def delete_membership(id):
