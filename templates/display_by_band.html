@@ -28,7 +28,14 @@
   <h4>Albums</h4>
   <ul>
     {% for album in band.albums %}
-    <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }})</li>
+    <li>{{ album.AlbumTitle }} ({{ album.ReleaseYear }}) 
+        {% if album.contributing_bands %}
+            - Contributing:
+            {% for contrib_band in album.contributing_bands %}
+                {{ contrib_band.BandName }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% endif %}
+    </li>
     {% endfor %}
   </ul>
 </section>

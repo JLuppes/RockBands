@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, jsonify, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
@@ -14,6 +14,11 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SECRET'
 
 db = SQLAlchemy(app)
 
+album_contributors = db.Table('album_contributors',
+    db.Column('album_id', db.Integer, db.ForeignKey('albums.AlbumID'), primary_key=True),
+    db.Column('band_id', db.Integer, db.ForeignKey('bands.BandID'), primary_key=True)
+)
+
 # ==========================
 # DATABASE MODELS
 # ==========================
@@ -27,7 +32,7 @@ class Bands(db.Model):
     # Relationship: One band has many members + albums
     # members = db.relationship('Members', backref='band', lazy=True)
     memberships = db.relationship('Memberships', backref='band', lazy=True)
-    albums = db.relationship('Albums', backref='band', lazy=True)
+    albums = db.relationship('Albums', backref='primary_band', lazy=True, foreign_keys='Albums.BandID')
 
 
 class Members(db.Model):
@@ -55,6 +60,10 @@ class Albums(db.Model):
         'bands.BandID'), nullable=False)
     AlbumTitle = db.Column(db.String(80), nullable=False)
     ReleaseYear = db.Column(db.Integer)
+    contributing_bands = db.relationship('Bands', secondary=album_contributors, backref=db.backref('contributed_albums', lazy='dynamic'))
+                                        
+                                        
+
 
 # ==========================
 # ROUTES
@@ -95,18 +104,37 @@ def add_member():
     return render_template('add_member.html', bands=bands)
 
 
+
 @app.route('/albums/add', methods=['GET', 'POST'])
 def add_album():
-    bands = Bands.query.all()
     if request.method == 'POST':
+        album_title = request.form.get('albumtitle')
+        release_year = request.form.get('releaseyear')
+        band_id = request.form.get('bandid')
+        contributing_band_ids = request.form.getlist("checkboxContainer")        
+
+        if not album_title or not band_id:
+            return "Please Enter a album title and/or choose a band.", 400
+        
+        release_year_int = int(release_year) if release_year else None
+        
         new_album = Albums(
-            AlbumTitle=request.form['albumtitle'],
-            ReleaseYear=request.form['releaseyear'],
-            BandID=request.form['bandid']
+            BandID=int(band_id),
+            AlbumTitle=album_title,
+            ReleaseYear=release_year_int,          
         )
+        for band_id_str in contributing_band_ids:
+            contributing_band = Bands.query.get(int(band_id_str))
+            if contributing_band:
+                new_album.contributing_bands.append(contributing_band)
+        
         db.session.add(new_album)
         db.session.commit()
-        return redirect(url_for('index'))
+        flash(f"ALbum '{album_title}' added successfully!", 'success')
+        return redirect(url_for('view_by_band'))
+    
+
+    bands = Bands.query.all()
     return render_template('add_album.html', bands=bands)
 
 
@@ -122,6 +150,10 @@ def view_band(id):
     band = Bands.query.get_or_404(id)
     return render_template('display_by_band.html', bands=[band])
 
+@app.route('/bands/view/album')
+def album(id):
+    album = Albums.query.get_or_404(id)
+    return render_template('display_by_bands.html', Albums=[album])
 
 @app.route('/memberships/add', methods=['GET', 'POST'])
 def add_membership():
@@ -168,6 +200,15 @@ def delete_membership(id):
     db.session.commit()
     flash('Membership removed', 'success')
     return redirect(url_for('view_by_band'))
+
+
+@app.route('/api/bands')
+def get_bands():
+    bands = Bands.query.all()
+    return jsonify([{
+        'id': band.BandID,
+        'name': band.BandName,
+    } for band in bands])
 
 
 # Create DB if not exists
