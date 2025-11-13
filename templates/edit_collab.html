@@ -1,0 +1,39 @@
+{%extends "base.html"%}
+{%block content%}
+<h2>Edit Collab</h2>
+<form method="POST">
+    <label for="albumid">Album:</label>
+    <select name="albumid" id="albumid" required>
+        <option value="">Select Album</option>
+        {%for album in albums%}
+            <option value="{{album.AlbumID}}" {%if album.AlbumID == collaboration.AlbumID%}selected{%endif%}>{{album.AlbumTitle}}({{album.ReleaseYear}})</option>
+            {%endfor%}
+    </select>
+    <br><br>
+
+    <label for="bandid">-Collaborating Band-</label>
+    <select name="bandid" id="bandid" required>
+        <option value="">-Select Band-</option>
+        {%for band in bands%}
+            <option value="{{band.BandID}}" {%if band.BandID == collaboration.BandID%}selected{%endif%}>{{band.BandName}}</option>
+            {%endfor%}
+    </select>
+    <br><br>
+
+    <label for="role">-Role-</label>
+    <input type="text" name="role" id="role" value="{{ collaboration.Role }}" placeholder="e.g., Featured Artist, Guest, Prod">
+    <br><br>
+
+    <button type="submit">Update Collab</button>
+    <a href="{{ url_for('view_by_band') }}">Cancel</a>
+</form>
+
+<hr>
+
+<h3>Delete Collab</h3>
+<p>This will permanently remove this collaboration record.</p>
+<a href="{{ url_for('delete_collaboration', id=collaboration.CollaborationID) }}" 
+    onclick="return confirm('Are you sure you want to delete this collaboration?')">
+    Delete Collaboration
+</a>
+{% endblock %}
