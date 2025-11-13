@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Rock Bands</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
-</head>
-<body>
+  </head>
+  <body>
     <header>
         <h1>Collection of Great Rock Bands</h1>
         <nav>
@@ -19,7 +22,10 @@
         </nav>
     </header>
     <main>
-        {% block content %}{% endblock %}
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, msg in messages %}
+      <p class="{{ category }}">{{ msg }}</p>
+      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
     </main>
-</body>
+  </body>
 </html>

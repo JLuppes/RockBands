@@ -9,15 +9,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 
 # Using SQLite for student simplicity
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rockbands-mm.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SECRET'
 
 db = SQLAlchemy(app)
 
 # ==========================
 # DATABASE MODELS
 # ==========================
-
 class Albums(db.Model):
     AlbumID = db.Column(db.Integer, primary_key=True)
     BandID = db.Column(db.Integer, db.ForeignKey('bands.BandID'), nullable=False)
@@ -32,8 +32,8 @@ class Bands(db.Model):
     HomeLocation = db.Column(db.String(80))
     memberships = db.relationship('Memberships', backref='band', lazy=True)
     albums = db.relationship('Albums', backref='band', lazy=True)
-    collaborations = db.relationship('Collaborations', backref='collaborating_band', lazy=True)      
-
+    collaborations = db.relationship('Collaborations', backref='collaborating_band', lazy=True)
+    
 class Members(db.Model):
     MemberID = db.Column(db.Integer, primary_key=True)
     MemberName = db.Column(db.String(80), nullable=False)
@@ -59,9 +59,11 @@ class Collaborations(db.Model):
 # ROUTES
 # ==========================
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/bands/add', methods=['GET', 'POST'])
 def add_band():
@@ -75,6 +77,7 @@ def add_band():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('add_band.html')
+
 
 @app.route('/members/add', methods=['GET', 'POST'])
 def add_member(): # Students see querying with relationships
@@ -102,10 +105,12 @@ def add_album():
         return redirect(url_for('index'))
     return render_template('add_album.html', bands=bands)
 
+
 @app.route('/bands/view')
 def view_by_band():
     bands = Bands.query.all()
     return render_template('display_by_band.html', bands=bands)
+
 
 @app.route('/bands/view/<int:id>')
 def view_band(id):
